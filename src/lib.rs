@@ -28,7 +28,7 @@ mod heap {
                 {
                     heap.elements.swap(cur_elem, parent);
                     cur_elem = parent;
-                    parent = (cur_elem.wrapping_sub(1)) / 2;
+                    parent = cur_elem.wrapping_sub(1) / 2;
                 }
             }
             self.elements.push(value);
