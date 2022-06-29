@@ -20,7 +20,7 @@ mod heap {
         }
 
         fn insert(&mut self, value: T) {
-            fn heapyfy_up<T: std::cmp::PartialOrd>(heap: &mut Heap<T>, i: usize) {
+            fn heapify_up<T: std::cmp::PartialOrd>(heap: &mut Heap<T>, i: usize) {
                 let mut cur_elem = i;
                 let mut parent: usize = cur_elem.wrapping_sub(1) / 2;
                 while parent < heap.elements.len()
@@ -32,10 +32,36 @@ mod heap {
                 }
             }
             self.elements.push(value);
-            heapyfy_up(self, self.elements.len() - 1);
+            heapify_up(self, self.elements.len() - 1);
         }
         fn pop(&mut self) -> T {
-            self.elements[0]
+            fn heapify_down<T: std::cmp::PartialOrd>(heap: &mut Heap<T>, i: usize) {
+                let mut i = i;
+                let mut left_child = 2 * i + 1;
+                let mut right_child = 2 * i + 2;
+                while left_child < heap.elements.len() {
+                    let mut largest = left_child;
+                    if right_child < heap.elements.len()
+                        && heap.elements[right_child] > heap.elements[left_child]
+                    {
+                        largest = right_child;
+                    }
+                    if heap.elements[largest] > heap.elements[i] {
+                        heap.elements.swap(largest, i);
+                        i = largest;
+                        left_child = 2 * i + 1;
+                        right_child = 2 * i + 2;
+                    } else {
+                        break;
+                    }
+                }
+            }
+            let max = self.elements[0];
+            let cur_len = self.elements.len();
+            self.elements.swap(0, cur_len - 1);
+            self.elements.pop();
+            heapify_down(self, 0);
+            max
         }
     }
 }
