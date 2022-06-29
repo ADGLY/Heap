@@ -2,29 +2,29 @@
 mod tests;
 
 mod heap {
-    pub struct Heap<T> {
-        pub elements: Vec<T>,
+    use std::marker::PhantomData;
+    pub struct Heap<T: HeapImpl, U> {
+        pub elements: Vec<U>,
+        phantom: PhantomData<T>,
     }
 
-    impl<T> Heap<T> {
+    impl<T: HeapImpl, U> Heap<T, U> {
         pub fn new(size: usize) -> Self {
             Heap {
                 elements: Vec::with_capacity(size),
+                phantom: PhantomData,
             }
         }
     }
 
-    pub struct BinaryHeap;
-    pub struct FourAryHeap;
-
-    pub trait HeapTrait<T, U> {
+    pub trait HeapTrait<U> {
         fn insert(&mut self, value: U);
         fn pop(&mut self) -> U;
     }
 
-    impl<U: std::cmp::PartialOrd + Copy> HeapTrait<BinaryHeap, U> for Heap<U> {
+    impl<U: std::cmp::PartialOrd + Copy> HeapTrait<U> for Heap<BinaryHeap, U> {
         fn insert(&mut self, value: U) {
-            fn heapify_up<T: std::cmp::PartialOrd>(heap: &mut Heap<T>, i: usize) {
+            fn heapify_up<U: std::cmp::PartialOrd>(heap: &mut Heap<BinaryHeap, U>, i: usize) {
                 let mut cur_elem = i;
                 let mut parent: usize = cur_elem.wrapping_sub(1) / 2;
                 while parent < heap.elements.len()
@@ -40,7 +40,7 @@ mod heap {
         }
 
         fn pop(&mut self) -> U {
-            fn heapify_down<U: std::cmp::PartialOrd>(heap: &mut Heap<U>, i: usize) {
+            fn heapify_down<U: std::cmp::PartialOrd>(heap: &mut Heap<BinaryHeap, U>, i: usize) {
                 let mut i = i;
                 let mut left_child = 2 * i + 1;
                 let mut right_child = 2 * i + 2;
@@ -70,9 +70,9 @@ mod heap {
         }
     }
 
-    impl<U: std::cmp::PartialOrd + Copy> HeapTrait<FourAryHeap, U> for Heap<U> {
+    impl<U: std::cmp::PartialOrd + Copy> HeapTrait<U> for Heap<FouraryHeap, U> {
         fn insert(&mut self, value: U) {
-            fn heapify_up<T: std::cmp::PartialOrd>(heap: &mut Heap<T>, i: usize) {
+            fn heapify_up<U: std::cmp::PartialOrd>(heap: &mut Heap<FouraryHeap, U>, i: usize) {
                 let mut cur_elem = i;
                 let mut parent: usize = cur_elem.wrapping_sub(1) / 2;
                 while parent < heap.elements.len()
@@ -89,7 +89,7 @@ mod heap {
         }
 
         fn pop(&mut self) -> U {
-            fn heapify_down<U: std::cmp::PartialOrd>(heap: &mut Heap<U>, i: usize) {
+            fn heapify_down<U: std::cmp::PartialOrd>(heap: &mut Heap<FouraryHeap, U>, i: usize) {
                 let mut i = i;
                 let mut left_child = 2 * i + 1;
                 let mut right_child = 2 * i + 2;
@@ -118,4 +118,20 @@ mod heap {
             max
         }
     }
+
+    mod inner_heap {
+        use crate::heap::BinaryHeap;
+        use crate::heap::FouraryHeap;
+
+        pub trait Sealed {}
+        impl Sealed for BinaryHeap {}
+        impl Sealed for FouraryHeap {}
+    }
+
+    pub trait HeapImpl: inner_heap::Sealed {}
+    impl HeapImpl for BinaryHeap {}
+    impl HeapImpl for FouraryHeap {}
+
+    pub struct BinaryHeap;
+    pub struct FouraryHeap;
 }
