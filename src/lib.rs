@@ -1,23 +1,32 @@
 #[cfg(test)]
 mod tests;
 
-mod heap {
+pub mod heap {
     use std::marker::PhantomData;
     pub struct Heap<T: HeapImpl, U> {
-        pub elements: Vec<U>,
+        elements: Vec<U>,
         phantom: PhantomData<T>,
     }
 
-    impl<T: HeapImpl, U> Heap<T, U> {
+    impl<T: HeapImpl, U: std::cmp::PartialOrd + Copy> Heap<T, U> {
         pub fn new(size: usize) -> Self {
             Heap {
                 elements: Vec::with_capacity(size),
                 phantom: PhantomData,
             }
         }
+
+        pub fn max(&mut self) -> U {
+            self.elements[0]
+        }
+
+        pub fn clear(&mut self) {
+            //Safe because U should implement copy so no drop needed
+            unsafe { self.elements.set_len(0) }
+        }
     }
 
-    pub trait HeapTrait<U> {
+    pub trait HeapTrait<U: std::cmp::PartialOrd + Copy> {
         fn insert(&mut self, value: U);
         fn pop(&mut self) -> U;
     }

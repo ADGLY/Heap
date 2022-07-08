@@ -13,9 +13,9 @@ static TEST_SIZE: usize = 100_000;
 
 use rand::Rng;
 #[rstest]
-#[case(Heap::<BinaryHeap, OrderedFloat<f64>>::new(TEST_SIZE))]
-#[case(Heap::<FouraryHeap, u64>::new(TEST_SIZE))]
-fn binary_heap<T: HeapImpl, U>(#[case] mut heap: Heap<T, U>)
+#[case(&mut Heap::<BinaryHeap, OrderedFloat<f64>>::new(TEST_SIZE))]
+#[case(&mut Heap::<FouraryHeap, u64>::new(TEST_SIZE))]
+fn binary_heap<T: HeapImpl, U>(#[case] heap: &mut Heap<T, U>)
 where
     U: std::cmp::PartialOrd + Copy + std::fmt::Debug + std::cmp::Ord,
     Standard: Distribution<U>,
@@ -28,18 +28,18 @@ where
         let value = rng.gen::<U>();
         heap.insert(value);
         std_heap.push(value);
-        assert_eq!(heap.elements[0], *std_heap.peek().unwrap());
+        assert_eq!(heap.max(), *std_heap.peek().unwrap());
     }
 
     for _x in 0..TEST_SIZE - 1 {
-        assert_eq!(heap.elements[0], *std_heap.peek().unwrap());
+        assert_eq!(heap.max(), *std_heap.peek().unwrap());
 
         let value = heap.pop();
         let std_value = std_heap.pop().unwrap();
 
         assert_eq!(value, std_value);
 
-        assert_eq!(heap.elements[0], *std_heap.peek().unwrap());
+        assert_eq!(heap.max(), *std_heap.peek().unwrap());
     }
     let value = heap.pop();
     let std_value = std_heap.pop().unwrap();

@@ -11,3 +11,8 @@ rand = "0.8.4"
 [dev-dependencies]
 rstest = "0.15.0"
 ordered-float = {version = "3.0.0", features = ["rand"]}
+criterion = "0.3"
+
+[[bench]]
+name = "heap_benchmark"
+harness = false
