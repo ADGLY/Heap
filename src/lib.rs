@@ -5,7 +5,7 @@ pub mod heap {
     use std::marker::PhantomData;
     pub struct Heap<T: HeapImpl, U> {
         elements: Vec<U>,
-        phantom: PhantomData<T>,
+        pub phantom: PhantomData<T>,
     }
 
     impl<T: HeapImpl, U: std::cmp::PartialOrd + Copy> Heap<T, U> {
