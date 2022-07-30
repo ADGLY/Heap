@@ -56,7 +56,7 @@ fn heap_benchmark(c: &mut Criterion) {
     for _x in 0..TEST_SIZE {
         values.push(rng.gen::<f64>());
     }
-    for heap_type in ["Binary", "Fourary"].iter() {
+    for heap_type in ["Binary", "Fourary", "MaxMin"].iter() {
         let bench_name = format!("bench for {} heap", heap_type);
         match *heap_type {
             "Binary" => heap_benchmark_impl(
@@ -73,6 +73,12 @@ fn heap_benchmark(c: &mut Criterion) {
                     &bench_name,
                 );
             }
+            "MaxMin" => heap_benchmark_impl(
+                &mut Heap::<MaxMinHeap, f64>::new(TEST_SIZE),
+                &values,
+                c,
+                &bench_name,
+            ),
             _ => panic!("Heap type not found !"),
         }
     }

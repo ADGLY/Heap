@@ -3,6 +3,7 @@ use crate::heap::FouraryHeap;
 use crate::heap::Heap;
 use crate::heap::HeapImpl;
 use crate::heap::HeapTrait;
+use crate::heap::MaxMinHeap;
 
 use ordered_float::OrderedFloat;
 use rand::distributions::Standard;
@@ -15,6 +16,7 @@ use rand::Rng;
 #[rstest]
 #[case(&mut Heap::<BinaryHeap, OrderedFloat<f64>>::new(TEST_SIZE))]
 #[case(&mut Heap::<FouraryHeap, u64>::new(TEST_SIZE))]
+#[case(&mut Heap::<MaxMinHeap, OrderedFloat<f64>>::new(TEST_SIZE))]
 fn binary_heap<T: HeapImpl, U>(#[case] heap: &mut Heap<T, U>)
 where
     U: std::cmp::PartialOrd + Copy + std::fmt::Debug + std::cmp::Ord,
